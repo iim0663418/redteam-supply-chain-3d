@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我不打你，我打你的供應商｜立體版（虛構情境）</title>
+<style>
+:root{
+  --bg0:#070B16; --bg1:#101A31; --ink:#EAF0FA; --ink2:#9BA8C0; --rule:#2A3654; --panel:rgba(13,20,38,.92); --panel2:#162038;
+  --red:#FF5A5F; --redsoft:rgba(255,90,95,.16); --redglow:rgba(255,90,95,.7); --blue:#58A8FF; --bluesoft:rgba(88,168,255,.16); --blueglow:rgba(88,168,255,.65); --amber:#FFBE55;
+  --plat:#17233F; --platside:#0C1426; --platline:rgba(120,165,255,.34); --home:#1C3260; --grid:rgba(140,170,230,.07);
+  --sans:"PingFang TC","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+  --serif:"Songti TC","Noto Serif TC","Noto Serif CJK TC","Source Han Serif TC","PMingLiU",serif;
+  --rx:56deg; --rz:-26deg; --s:1; --ls:1; --cx:50%; --cy:44%;
+}
+body.light{
+  --bg0:#E9EDF3; --bg1:#F6F8FB; --ink:#161B24; --ink2:#515B6C; --rule:#C2C9D6; --panel:rgba(255,255,255,.95); --panel2:#F0F3F8;
+  --red:#B4232A; --redsoft:rgba(180,35,42,.1); --redglow:rgba(180,35,42,.35); --blue:#1D4F91; --bluesoft:rgba(29,79,145,.1); --blueglow:rgba(29,79,145,.35); --amber:#8A5A00;
+  --plat:#FFFFFF; --platside:#C9D2E0; --platline:rgba(29,79,145,.4); --home:#DCE8FA; --grid:rgba(30,50,90,.07);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{font-size:clamp(15px,.98vw,20px)}
+body{margin:0;height:100vh;overflow:hidden;background:var(--bg0);color:var(--ink);font-family:var(--sans);line-height:1.55;display:flex;flex-direction:column;-webkit-text-size-adjust:100%}
+h1,h2,h3,h4,p,ul,ol{margin:0;padding:0}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+.bar{flex:none;display:flex;gap:1rem;align-items:center;padding:.45rem .9rem;border-bottom:1px solid var(--rule);background:var(--panel);z-index:5}
+.bar h1{font-family:var(--serif);font-size:1.3rem;letter-spacing:.03em;line-height:1.2;white-space:nowrap}
+.bar .sub{font-size:.72rem;color:var(--ink2);white-space:nowrap}
+@media (max-width:1500px){.bar .sub{display:none}.bar h1{font-size:1.12rem}}
+.pills{display:flex;gap:.35rem;margin:0 auto}
+.pill{border:1px solid var(--rule);background:transparent;border-radius:2rem;padding:.2rem .8rem;font-size:.82rem;white-space:nowrap;text-align:left}
+.pill b{margin-right:.4rem}
+.pill small{color:var(--ink2);font-size:.74rem}
+.pill[aria-pressed="true"]{border-color:var(--red);background:var(--redsoft)}
+.pill .v-stop,.pill .v-limit{color:var(--blue)} .pill .v-open,.pill .v-gamble{color:var(--red)}
+.tools{display:flex;gap:.35rem;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.tools button,.tools label{font-size:.78rem;border:1px solid var(--rule);background:transparent;padding:.22rem .55rem;border-radius:3px;white-space:nowrap;color:var(--ink)}
+.tools button[aria-pressed="true"],.tools button.arm{background:var(--ink);color:var(--bg0)}
+.tools button:disabled{opacity:.4;cursor:default}
+.tools label{display:inline-flex;gap:.3rem;align-items:center;cursor:pointer}
+
+.vp{flex:1 1 auto;position:relative;overflow:hidden;min-height:0;perspective:1700px;perspective-origin:var(--cx) var(--cy);background:radial-gradient(120% 90% at 60% 30%,var(--bg1),var(--bg0));touch-action:none;cursor:grab}
+.vp.drag{cursor:grabbing}
+.world{position:absolute;left:var(--cx);top:var(--cy);width:1200px;height:640px;margin:-320px 0 0 -600px;transform-style:preserve-3d;transform:scale(var(--s)) rotateX(var(--rx)) rotateZ(var(--rz))}
+.world *{transform-style:preserve-3d}
+.ground{position:absolute;left:-160px;top:-120px;right:-160px;bottom:-110px;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;border:1px solid var(--grid)}
+.ref{position:absolute;width:2px;height:2px;visibility:hidden}
+.box{position:absolute}
+.box>.top{position:absolute;left:0;top:0;right:0;bottom:0;transform:translateZ(var(--h));background:var(--plat);border:1.5px solid var(--platline)}
+.box>.front{position:absolute;left:0;top:100%;width:100%;height:var(--h);transform-origin:0 0;transform:rotateX(90deg);background:var(--platside);border:1px solid var(--platline)}
+.box>.side{position:absolute;top:0;width:var(--h);height:100%;transform-origin:0 0;transform:rotateY(-90deg);background:var(--platside);border:1px solid var(--platline)}
+.box>.side.r{left:100%} .box>.side.l{left:0}
+.plat.far>.top{opacity:.55;border-style:dashed}
+.plat.mid>.top{opacity:.8}
+.plat.home>.top{background:var(--home);border-color:var(--blue);box-shadow:0 0 34px var(--bluesoft) inset}
+.plat.home.engine>.top{box-shadow:0 0 0 4px var(--blue),0 0 40px var(--blue)}
+.core>.top{background:var(--blue);border-color:#fff;box-shadow:0 0 26px var(--blue)}
+.core>.front,.core>.side{background:var(--blue);opacity:.75;border-color:rgba(255,255,255,.5)}
+.core.hit>.top{background:var(--red);box-shadow:0 0 30px var(--red)}
+.core.hit>.front,.core.hit>.side{background:var(--red)}
+.clab.hit{border-color:var(--red);color:var(--red)}
+.bb{position:absolute;transform-origin:0 0;white-space:nowrap;transform:translate3d(0,0,var(--z,60px)) rotateZ(calc(var(--rz)*-1)) rotateX(calc(var(--rx)*-1)) scale(var(--ls)) translate(-50%,-100%)}
+.clab{font-size:13px;font-weight:700;background:var(--panel);border:1px solid var(--blue);padding:1px 7px;border-radius:2px;pointer-events:none}
+.flab{font-size:12.5px;padding:1px 7px;border-radius:2px;border:1px solid var(--blue);color:var(--blue);background:var(--panel);pointer-events:none}
+.flab.off{border-color:var(--rule);color:var(--ink2);border-style:dashed}
+.law{position:absolute;width:190px;height:118px;transform-origin:0 0;transform:translate3d(0,0,44px) rotateX(-90deg) translate(-50%,-100%);background:linear-gradient(to bottom,transparent,var(--bluesoft) 55%,var(--blue));opacity:.5;pointer-events:none;border-left:1px solid var(--blue);border-right:1px solid var(--blue)}
+.seg{position:absolute;height:6px;margin-top:-3px;transform-origin:0 50%;border-radius:3px;pointer-events:none}
+.seg.flow{background:repeating-linear-gradient(90deg,var(--red) 0 14px,transparent 14px 24px);background-size:24px 100%;box-shadow:0 0 16px 3px var(--redglow);animation:flowbg .9s linear infinite}
+.seg.todo,.seg.dimr,.seg.gone{height:3px;margin-top:-1.5px;background:repeating-linear-gradient(90deg,var(--red) 0 4px,transparent 4px 13px);opacity:.6}
+.seg.dimr{opacity:.32}
+.seg.gone{background:repeating-linear-gradient(90deg,var(--ink2) 0 4px,transparent 4px 13px)}
+.seg.rail{height:5px;margin-top:-2.5px;background:var(--rule)}
+.seg.rail.lit{height:10px;margin-top:-5px;background:var(--blue);box-shadow:0 0 20px 4px var(--blueglow)}
+.seg.rail.never{height:3px;background:repeating-linear-gradient(90deg,var(--ink2) 0 3px,transparent 3px 12px);opacity:.7}
+.seg.rail.cert{height:10px;margin-top:-5px;background:repeating-linear-gradient(90deg,var(--blue) 0 6px,transparent 6px 12px)}
+.flat{position:absolute;white-space:nowrap;pointer-events:none}
+.flat.axis{font-size:19px;color:var(--ink2);letter-spacing:.08em}
+.flat.pname b{display:block;font-size:31px;line-height:1.15;letter-spacing:.04em}
+.flat.pname span{font-size:17px;color:var(--ink2)}
+.flat.pname.home b{color:var(--blue)}
+.flat.pname.far{opacity:.7}
+.flat.rlabel{font-size:18px;color:var(--ink2)}
+.flat.rlabel.on{color:var(--blue);font-weight:700}
+.disc{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px solid var(--red);background:var(--redsoft);transform:translateZ(var(--z,20px))}
+.disc.dim{opacity:.3} .disc.gone{border-color:var(--ink2);background:transparent;opacity:.5} .disc.hid{border-style:dashed;opacity:.45}
+.wall{position:absolute;width:74px;height:54px;transform-origin:0 0;transform:translate3d(0,0,var(--z,20px)) rotateZ(90deg) rotateX(-90deg) translate(-50%,-100%);pointer-events:none}
+.wall i{display:block;width:100%;height:100%;transform-origin:50% 100%;border:2px solid var(--blue)}
+.wall.open i{border:1.5px dashed var(--ink2);opacity:.35;height:8px;margin-top:46px}
+.wall.paper i{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--blueglow) 6px 8px);border-style:dashed;opacity:.85}
+.wall.locked i{background:linear-gradient(to top,var(--blue),var(--bluesoft));box-shadow:0 0 22px var(--blue)}
+.wall.stale i{border-color:var(--amber);border-style:dashed;background:repeating-linear-gradient(135deg,transparent 0 7px,rgba(255,190,85,.25) 7px 9px)}
+.wall.dim{opacity:.25}
+.badge{--z:54px;display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--red);background:var(--panel);color:var(--ink);border-radius:20px;padding:2px 10px 2px 8px;font-size:15px;font-weight:700;cursor:pointer}
+.badge .n{font-family:var(--serif);font-size:18px;color:var(--red)}
+.badge.hid{border-style:dashed;color:var(--ink2);border-color:var(--ink2);font-weight:400}
+.badge.dim{opacity:.4}
+.badge.gone{border-color:var(--ink2);opacity:.6}
+.badge.cur{--z:74px;border-width:2.5px;box-shadow:0 0 0 3px var(--redsoft),0 0 20px var(--red);font-size:16px}
+.badge svg{flex:none}
+.rlab{--z:40px;font-size:13.5px;border:1px solid var(--red);color:var(--red);background:var(--panel);padding:1px 8px;border-radius:2px;cursor:pointer}
+.rlab.sel{background:var(--red);color:#fff;font-weight:700}
+body.light .rlab.sel{color:#fff}
+.token{--z:118px;pointer-events:none;text-align:center;font-size:13px;font-weight:700;color:var(--red)}
+.token i{display:block;width:22px;height:22px;margin:0 auto 2px;background:var(--red);transform:rotate(45deg);box-shadow:0 0 18px var(--red)}
+@keyframes flowbg{to{background-position:24px 0}}
+@keyframes drop{from{opacity:0;transform:translateZ(260px)}to{opacity:1;transform:translateZ(0)}}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pop{from{opacity:0}to{opacity:1}}
+.world.intro .plat{animation:drop .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.28s)}
+.world.intro .pname{animation:pop .6s both;animation-delay:.9s}
+.world.anim .wall.chg i{animation:rise .7s cubic-bezier(.2,.9,.2,1) both}
+.world.anim .fresh{animation:pop .6s both}
+body.rm .world *{animation:none!important}
+@media (prefers-reduced-motion:reduce){.world *{animation:none!important}}
+
+/* 對話框 */
+.talk{position:absolute;left:.7rem;bottom:.7rem;right:calc(var(--dw,0px) + 1.4rem);background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--red);padding:.45rem .9rem .55rem;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:.2rem 1.2rem;z-index:3;cursor:auto;max-height:42%;overflow:auto}
+.talk.coach{border-top-color:var(--blue)}
+.talk.one{grid-template-columns:1fr}
+.who{font-size:.74rem;font-weight:700;letter-spacing:.06em;color:var(--red)}
+.coach .who{color:var(--blue)}
+.line{font-family:var(--serif);font-size:1.14rem;line-height:1.5;margin:.15rem 0 .25rem}
+.line.red{color:var(--red)}
+.stepmeta{font-size:.82rem;color:var(--ink2);display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline}
+.stepmeta b{color:var(--ink);font-size:.98rem}
+.stepmeta .rt{font-size:.76rem;border-right:1px solid var(--rule);padding-right:.5rem}
+.stepmeta .th{color:var(--red);border:1px solid var(--red);padding:0 .35em;font-size:.74rem;white-space:nowrap}
+.coachline{font-size:.95rem;border-left:3px solid var(--blue);padding-left:.6rem;margin:.35rem 0}
+.gate{font-size:.82rem;margin-top:.35rem;display:flex;gap:.3rem .6rem;flex-wrap:wrap;align-items:center}
+.gate b{font-size:.88rem}
+.gs{font-weight:700;font-size:.74rem;padding:0 .4em;border:1px solid currentColor;white-space:nowrap}
+.gs.open{color:var(--red)} .gs.paper{color:var(--ink)} .gs.locked{color:var(--blue)} .gs.stale{color:var(--amber)}
+.gate .why{flex-basis:100%;color:var(--ink2);font-size:.78rem}
+.gate .role{color:var(--ink2);font-size:.76rem}
+.gate summary{cursor:pointer;text-decoration:underline;text-underline-offset:.2em}
+.chip{border:1px solid var(--ink2);background:transparent;border-radius:3px;padding:.1rem .5rem .1rem 1.4rem;font-size:.78rem;position:relative}
+.chip::before{content:"";position:absolute;left:.38rem;top:.36rem;width:.68rem;height:.68rem;border:1.5px solid var(--ink2)}
+.chip[aria-pressed="true"]{border:2px solid var(--blue);background:var(--bluesoft);font-weight:700}
+.chip[aria-pressed="true"]::before{background:var(--blue);border-color:var(--blue)}
+.nav{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem;align-items:center}
+.btn{border:1px solid var(--ink2);background:transparent;border-radius:3px;padding:.3rem .8rem;font-size:.86rem;white-space:nowrap}
+.btn:hover{background:var(--panel2)}
+.btn.go{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;font-size:.95rem;padding:.4rem 1.1rem}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#06101F;font-weight:700;font-size:.95rem;padding:.4rem 1.1rem}
+body.light .btn.blue{color:#fff}
+.btn.link{border:0;text-decoration:underline;text-underline-offset:.2em;color:var(--ink2);padding:.3rem .3rem}
+.dmg h4{font-size:.8rem;color:var(--red);margin-bottom:.15rem}
+.dmg li{display:grid;grid-template-columns:3.6em 1fr;gap:.4rem;font-size:.82rem;padding:.1rem 0;border-top:1px dotted var(--rule)}
+.dmg li:first-child{border-top:0}
+.ds{font-size:.72rem;font-weight:700;white-space:nowrap;padding-top:.1rem}
+.ds.open{color:var(--red)} .ds.closed{color:var(--blue)} .ds.paper{color:var(--amber)}
+.dmg li.closed .dt{text-decoration:line-through;color:var(--ink2)}
+.dmg em{display:block;font-style:normal;color:var(--blue)}
+.resid{font-size:.76rem;color:var(--ink2);margin-top:.25rem;border-left:3px solid var(--ink2);padding-left:.5rem;line-height:1.45}
+.msg{grid-column:1/-1;font-size:.76rem;color:var(--ink2);border-bottom:1px dotted var(--rule);padding-bottom:.2rem;margin-bottom:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg strong{color:var(--ink)}
+
+/* 動力盤 */
+.drawer{position:absolute;right:.7rem;top:.7rem;bottom:.7rem;width:19.5rem;background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--blue);padding:.55rem .65rem;overflow:auto;z-index:3;cursor:auto}
+.drawer h2{font-size:1rem;display:flex;justify-content:space-between;align-items:baseline}
+.drawer h2 small{font-weight:400;font-size:.72rem;color:var(--ink2)}
+.q{display:flex;gap:.3rem .5rem;align-items:center;justify-content:space-between;margin:.35rem 0 .45rem;padding:.35rem .5rem;background:var(--panel2);font-size:.82rem;flex-wrap:wrap}
+.q small{flex-basis:100%;font-size:.72rem;color:var(--ink2)}
+.src{margin-top:.5rem}
+.src h3{font-size:.9rem;display:flex;gap:.45rem;align-items:baseline}
+.src h3 small{font-size:.68rem;font-weight:400;color:var(--blue);border:1px solid var(--blue);padding:0 .35em}
+.src>p{font-size:.72rem;color:var(--ink2);line-height:1.4;margin-bottom:.25rem}
+.lv{display:block;width:100%;text-align:left;border:1px solid var(--ink2);background:transparent;border-radius:3px;padding:.22rem .45rem .28rem 1.7rem;position:relative;margin-bottom:.25rem}
+.lv::before{content:"";position:absolute;left:.45rem;top:.48rem;width:.8rem;height:.8rem;border:1.5px solid var(--ink2)}
+.lv[aria-pressed="true"]{border:2px solid var(--blue);background:var(--bluesoft)}
+.lv[aria-pressed="true"]::before{background:var(--blue);border-color:var(--blue)}
+.lv b{display:block;font-size:.84rem;line-height:1.3}
+.lv small{display:block;font-size:.7rem;color:var(--ink2);line-height:1.35}
+.lv .res{color:var(--blue);font-weight:700}
+.lv .aff{color:var(--ink)}
+.lv b i{font-style:normal;font-weight:400;font-size:.66rem;color:var(--amber);border:1px solid var(--amber);padding:0 .3em;margin-left:.4em;white-space:nowrap;vertical-align:.1em}
+.lv.rel{border-color:var(--amber)}
+.lv[aria-disabled="true"]{opacity:.32}
+.lv.hint{box-shadow:0 0 0 3px var(--amber);opacity:1}
+
+/* 回到題目、文字版 */
+.sheet{position:absolute;left:50%;top:1rem;bottom:1rem;width:min(46rem,92%);transform:translateX(-50%);background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--ink);z-index:6;overflow:auto;padding:1rem 1.2rem 1.4rem;cursor:auto}
+.sheet h2{font-family:var(--serif);font-size:1.4rem}
+.sheet h3{font-size:.88rem;margin:1rem 0 .35rem;padding-top:.5rem;border-top:1px solid var(--rule)}
+.sheet p{font-size:.92rem;margin:.3rem 0 .5rem;max-width:40em}
+.sheet .x{float:right}
+.sum{border:1px solid var(--rule)}
+.sum li{display:grid;grid-template-columns:7.4em 1fr;gap:.5rem;padding:.35rem .55rem;border-top:1px solid var(--rule);font-size:.86rem}
+.sum li:first-child{border-top:0}
+.log li{border-top:1px solid var(--rule);padding:.35rem 0;font-size:.82rem}
+.log .c{color:var(--ink2);font-size:.76rem}
+#textview{position:absolute;left:0;top:0;right:0;bottom:0;overflow:auto;background:var(--bg0);padding:1rem 1.3rem;z-index:4;cursor:auto}
+#textview h2{font-family:var(--serif);font-size:1.15rem;margin:1.1rem 0 .4rem}
+#textview p{font-size:.9rem;max-width:48em;margin-bottom:.4rem}
+table{border-collapse:collapse;width:100%;font-size:.82rem;margin-bottom:.4rem}
+th,td{border:1px solid var(--rule);padding:.3rem .5rem;text-align:left;vertical-align:top}
+th{background:var(--panel2);font-weight:700}
+.hintcam{position:absolute;left:.8rem;top:.6rem;font-size:.72rem;color:var(--ink2);z-index:2;pointer-events:none}
+@media (max-width:900px){.drawer{position:static;width:auto;margin:.5rem}.talk{position:static;margin:.5rem;right:auto;max-height:none}body{height:auto;overflow:auto}.vp{min-height:34rem;overflow:visible}.world{position:relative;left:50%;top:14rem}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div><h1>我不打你，我打你的供應商</h1><div class="sub">紅隊視角看供應鏈與第三方管理｜虛構情境，不對應任何真實企業或事件</div></div>
+  <div class="pills" id="pills" role="group" aria-label="紅隊的三條路線"></div>
+  <div class="tools" role="toolbar" aria-label="檢視與控制">
+    <button type="button" id="btnBack">總結</button>
+    <button type="button" id="btnCam">視角：立體</button>
+    <button type="button" id="btnTheme" aria-pressed="false">亮色</button>
+    <button type="button" id="btnView" aria-pressed="false">文字版</button>
+    <button type="button" id="btnUndo">上一步</button>
+    <button type="button" id="btnReset">重置</button>
+    <label><input type="checkbox" id="chkRm"> 減少動態</label>
+  </div>
+</header>
+<main class="vp" id="vp">
+  <div class="hintcam" id="hintcam">拖曳空白處可旋轉視角</div>
+  <div class="world" id="world" role="group" aria-label="立體場景：四層供應鏈平台與紅隊路線"></div>
+  <div id="textview" hidden tabindex="0" aria-label="文字版"></div>
+  <section class="talk" id="talk" aria-label="說明"></section>
+  <aside class="drawer" id="drawer" aria-label="GRC 動力盤" hidden></aside>
+  <div class="sheet" id="sheet" role="dialog" aria-label="總結：回到題目" hidden></div>
+</main>
+<div id="live" class="sr" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s);};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var NUM=['①','②','③'],CN=['一','二','三'];
+
+/* ───────── 動力源與措施 ───────── */
+var SRC={
+ L:{name:'法令',role:'壓力',sh:'只壓在你身上，不會自己走到供應商。一直都在，不能開關。',reach:'射程：只到本公司',text:'法令要求的是你：監督受託者、事故要通報、事後要能說明。它是非管不可的理由，但不會自己走到供應商那裡。'},
+ K:{name:'契約',role:'傳動',sh:'到直接供應商；要到下一層，得寫明。',reach:'射程：到直接供應商；要到下一層，得寫明',text:'把要求帶出公司的那根軸。沒寫進去的，對方沒有義務。'},
+ S:{name:'標準與認證',role:'借力',sh:'只在證書與報告寫明的範圍內有效。',reach:'射程：證書與報告寫明的範圍',text:'借第三方的眼睛，省自己查的力氣；範圍外的一概不算。'},
+ P:{name:'內部政策',role:'引擎',sh:'管的是自己人；前三種力量要有人去用才會動。',reach:'射程：自己人',text:'前面三種力量，都要有自己人去用才會動。'}
+};
+var LV=[
+ {id:'K1',src:'K',name:'存取與稽核條款',sh:'帳號、來源、紀錄的要求；公司有權查核',cs:'要議約，可能加價',desc:'維運帳號個人化、多因子驗證、來源限制、紀錄交付；本公司有權查核。',cost:'要議約，供應商可能要求調價。'},
+ {id:'K2',src:'K',name:'交付安全條款',sh:'交出成分清單；來源與變更要管；出事要通知',cs:'小廠未必做得到',desc:'交付成分清單（SBOM）、來源驗證與變更審核；重大變更與漏洞須通知。',cost:'供應商要有能力產出，小廠未必做得到。'},
+ {id:'K3',src:'K',name:'轉委託條款',sh:'下一層要先通知，並承擔同等義務',cs:'供應商得回頭重談',desc:'次承攬須事前通知，並承擔與供應商同等的義務。',cost:'供應商得回頭與業者 B 重談。'},
+ {id:'K4',src:'K',name:'退出與資料返還條款',sh:'匯出格式、轉換協助、刪除證明',cs:'事後補很難',desc:'匯出格式、轉換協助、刪除證明。',cost:'簽約時好談，事後補很難。'},
+ {id:'S1',src:'S',name:'核對認證與報告的範圍',sh:'拿證書與報告，對照你實際用的服務',cs:'結果可能不如預期',desc:'把 A 的證書、B 的報告，對照你實際使用的服務與期間。',cost:'花的是閱讀時間；結果可能不如預期。',res:'結果：A 的證書涵蓋軟體開發流程，不含維運服務；B 的報告涵蓋備份控制。'},
+ {id:'P1',src:'P',name:'委外監督辦法',sh:'指定負責人，每季覆核',cs:'固定佔用人力',desc:'指定負責人，每季覆核帳號清單、紀錄與供應商的通知。',cost:'固定佔用人力。'},
+ {id:'P2',src:'P',name:'上線前驗收',sh:'對不上清單與版本，就不部署',cs:'每次更新慢一點',desc:'核對版本、成分清單與交付物完整性，對不上就不部署。',cost:'每次更新都慢一點。'},
+ {id:'P3',src:'P',name:'演練把供應商拉進來',sh:'還原、通報、匯出，實際做一次',cs:'可能當場發現做不到',desc:'還原、通報、資料匯出實際做一次，供應商與託管層都參加。',cost:'要排時間，也可能當場發現做不到。'}
+];
+var LB={};LV.forEach(function(l){LB[l.id]=l;});
+function affOf(id){var out=[];ROUTES.forEach(function(r){['req','ver'].forEach(function(role){var ns=[];r.steps.forEach(function(st,i){if(G[st.g][role].indexOf(id)>=0)ns.push(NUM[i]);});if(ns.length)out.push(r.name+' '+ns.join('')+' 的'+(role==='req'?'要求':'確認'));});});return out.join('、');}
+var PERIODIC={P1:1,P3:1};
+
+var G={
+ g1:{name:'帳號個人化與多因子驗證',mode:'stop',req:['K1'],ver:['P1'],cert:'認證幫不上這一關：A 的證書不含維運服務。'},
+ g2:{name:'來源限制與帳號覆核',mode:'stop',req:['K1'],ver:['P1'],cert:'認證幫不上這一關：A 的證書不含維運服務。'},
+ g3:{name:'可歸屬、拿得到的操作紀錄',mode:'limit',req:['K1'],ver:['P1'],cert:'認證幫不上這一關：A 的證書不含維運服務。'},
+ g4:{name:'知道自己用了哪些元件',mode:'limit',req:['K2'],ver:['P2'],note:'上游沒有契約可簽。這一關是要求供應商交出成分清單（SBOM），再由自己人拿去比對（SCA）。'},
+ g5:{name:'來源驗證與建置管控',mode:'stop',req:['K2'],ver:['S1'],note:'確認可以借力：認證範圍如果涵蓋開發流程，第三方已經替你看過。要核對了才知道。'},
+ g6:{name:'上線前驗證交付物',mode:'stop',req:['P2'],ver:['K2'],half:'供應商交得出可對照的材料，但公司沒有上線前驗收這個程序。',note:'要求來自內規；但驗收要有東西可對照，那得靠契約讓供應商交出來。'},
+ g7:{name:'知道有這一層',mode:'limit',req:['K3'],ver:['P1'],note:'你和業者 B 之間沒有契約。力量要到這一層，只能經由供應商 A 的轉委託條款。'},
+ g8:{name:'備份隔離與還原演練',mode:'limit',req:['K3'],ver:['S1','P3'],note:'確認有兩條路：B 的報告涵蓋備份控制（借力），或實際演練一次（自己來）。'},
+ g9:{name:'資料帶得走',mode:'limit',req:['K4'],ver:['P3']}
+};
+var GS={open:'沒有關卡',paper:'紙上關卡',locked:'已鎖上',stale:'需重新確認'};
+var GSD={open:'沒有任何要求到得了這裡。',paper:'有要求，但沒有人確認過做到了沒有。',locked:'有要求，也確認過。',stale:'確認過，但之後環境變了；查的是變動前的狀況。'};
+
+var ROUTES=[
+ {id:'r1',ex:582,hit:'被讀走',name:'操作接管',tag:'借供應商的鑰匙',target:'客戶資料',end:[1100,170],
+  intro:'你的防火牆我不碰。你把維運交給供應商 A，那裡有一把能進你資料庫的鑰匙。我去拿那一把。',
+  steps:[
+   {p:[665,170],g:'g1',tier:'供應商 A',threat:'冒用身分',title:'拿到維運帳號',
+    say:{open:'A 的工程師共用一組維運帳號，沒有第二道驗證。一封像樣的信，我就有了。',paper:'契約寫了要個人帳號和多因子驗證。寫了，不代表做了；沒人來看過，我賭它沒開。',locked:'每個人各有帳號，還要第二道驗證，而且你們每季真的在對清單。這一步我過不去。'}},
+   {p:[805,170],g:'g2',tier:'供應商 A',threat:'權限濫用',title:'登入管理通道',
+    say:{open:'管理通道從哪裡都連得上；去年離開專案的人，帳號還在。',paper:'條款說要限制來源、定期停用帳號。清單上次是誰對的？沒有人知道。',locked:'只能從固定來源登入，多出來的帳號上一季就被停掉了。我手上的東西進不來。'}},
+   {p:[985,170],g:'g3',tier:'本公司的資料',threat:'資料外洩',title:'讀走客戶資料',
+    say:{open:'維運帳號本來就能讀整個資料庫。我慢慢搬，紀錄在供應商那邊，你要不到。',paper:'紀錄照約定要留、要交付。但你從沒要過一次；格式對不對、留多久，出事那天才會知道。',locked:'每筆操作對得到人，紀錄你定期在收。我就算進來，也是在你看得到的地方動手。'}}],
+  dmg:[{t:'全部客戶資料可被讀取與匯出',g:['g1','g2']},{t:'說不出是誰、在什麼時候、做了什麼',g:['g3']},{t:'通報期限開始計算時，還不知道影響範圍',g:['g3']}],
+  resid:'供應商的人會不會被騙，不在你手上。你能做的，是讓那把鑰匙單獨拿到也沒有用。'},
+ {id:'r2',ex:12,hit:'被植入',name:'交付污染',tag:'搭例行更新的車',target:'線上服務',end:[1100,395],
+  intro:'我不必進你的機房。你每個月都會自己把供應商給的新版裝上去，我只要搭那班車。',
+  steps:[
+   {p:[140,320],g:'g4',tier:'上游元件',threat:'竄改元件',title:'上游元件動手',
+    say:{open:'你的服務裡有個第三方元件 X。你不知道它在裡面，連供應商自己也要查一下才知道。',paper:'契約要求交付成分清單。清單交了，躺在共用資料夾；沒有人拿它去比對過任何通知。',locked:'X 出事的消息一出來，你們當天就比對出哪個版本用到它。我的時間窗變得很短。'}},
+   {p:[735,320],g:'g5',tier:'供應商 A',threat:'竄改交付物',title:'混進建置流程',
+    say:{open:'A 的建置流程抓到什麼就包什麼，誰都能合併、誰都能發布。',paper:'A 說有審核、有分支保護。「說有」和「拿得出紀錄」是兩件事，你沒有要過。',locked:'元件來源要驗、變更要審、發布身分有管，認證範圍也確實涵蓋這段流程。我的東西混不進去。'}},
+   {p:[985,320],g:'g6',tier:'本公司的部署',threat:'惡意更新',title:'跟著更新上線',
+    say:{open:'新版一到，你們照例直接部署。那是「正常更新」，沒有人會多看一眼。',paper:'內規說上線前要驗收。但供應商沒給可以對照的東西，驗收只剩下蓋章。',locked:'上線前你們核對版本、成分清單和交付物完整性。對不上的東西裝不上去。'}}],
+  dmg:[{t:'惡意程式以你的名義，在客戶面前執行',g:['g5','g6']},{t:'通知來了，卻不知道自己有沒有用到那個元件',g:['g4']},{t:'因為是正常更新，很久之後才被發現',g:['g6']}],
+  resid:'上游元件會不會出事，沒有任何契約管得到。你能做的，是知道自己用了什麼，以及不讓沒驗過的東西上線。'},
+ {id:'r3',ex:272,hit:'停擺',name:'依賴失效',tag:'不偷，讓你停',target:'線上服務',end:[1100,395],
+  intro:'有時候我根本不要你的資料。我只要讓你的服務停下來，而且停在一個你沒簽過約的地方。',
+  steps:[
+   {p:[355,470],g:'g7',tier:'業者 B',threat:'阻斷服務',title:'打沒簽約那層',
+    say:{open:'你的服務其實跑在業者 B 那裡。你的契約上沒有 B，你甚至沒聽過這個名字。',paper:'契約要求次承攬要先通知。A 通知過一次；之後換過誰、加了誰，沒有人追。',locked:'你知道 B 是誰、負責什麼，條款讓 B 承擔同等義務，而且你們定期在對。這一層不再是盲區。'}},
+   {p:[495,470],g:'g8',tier:'業者 B',threat:'毀損備份',title:'連備份帶走',
+    say:{open:'服務和備份放在同一個環境、同一組權限。我一次處理掉。',paper:'合約寫「每日備份」。有備份，和還原得回來，中間差一次演練。',locked:'備份在另一處，還原實際驗證過。我能讓你停一陣子，但停多久不是我決定。'}},
+   {p:[735,470],g:'g9',tier:'供應商 A',threat:'依賴鎖定',title:'讓你走不了',
+    say:{open:'A 同時有一整排客戶在找它。你想換一家？資料格式只有 A 讀得懂，契約沒說要幫你搬。',paper:'契約有退出條款。匯出的檔案能不能在別處還原，沒有人試過。',locked:'匯出格式、轉換協助都約定了，你們也實際匯出、還原過一次。A 倒了，你還有路。'}}],
+  dmg:[{t:'事故後才第一次聽到業者 B 這個名字',g:['g7']},{t:'服務停擺，停多久由別人決定',g:['g8'],after:'仍可能中斷，但還原時間是驗證過的'},{t:'備份和服務一起消失',g:['g8']},{t:'想換供應商，資料帶不走',g:['g9']}],
+  resid:'業者 B 會不會被攻擊，你管不到。這條路關不掉，只能決定它發生時你還有多少選擇。'}
+];
+var RB={};ROUTES.forEach(function(r,i){RB[r.id]=r;r.i=i;});
+LV.forEach(function(l){l.aff=affOf(l.id);});
+var EVENTS={
+ 2:{title:'業者 B 調整了架構',text:'服務搬到另一個區域，備份改由另一套系統處理。',stale:['g8'],told:'因為有轉委託條款，供應商 A 通知了你。',untold:'沒有人通知你。紅隊是從業者 B 的公開公告看到的。'},
+ 3:{title:'供應商 A 的維運加入外包人力',text:'新增了幾個維運帳號，也多了一家你沒簽約的公司。',stale:['g1','g2','g7'],told:'因為有轉委託條款，供應商 A 通知了你。',untold:'沒有人通知你。紅隊是從徵才啟事看到的。'}
+};
+
+/* ───────── 狀態 ───────── */
+/* tour：0 開場 → 1 看紅隊走路線一 → 2 接上契約 → 3 接上內部監督 → 4 規則小結 → -1 自由探索 */
+function fresh(){return {on:{},q:1,stale:{},log:[],n:0,msg:null,chg:[],tour:0};}
+var W=fresh(),H=[];
+var CAMS=[['立體','56deg','-26deg'],['另一側','58deg','24deg'],['俯視','0deg','0deg']];
+var UI={route:null,prog:{r1:0,r2:0,r3:0},cur:-1,view:'scene',arm:false,rm:false,light:false,animate:false,intro:true,cam:0,sheet:false,fresh:[]};
+function on(w,id){return !!w.on[id];}
+function gstate(g,w){var x=G[g],req=x.req.some(function(l){return on(w,l);}),ver=x.ver.some(function(l){return on(w,l);});
+  if(!req)return 'open';if(!ver)return 'paper';return w.stale[g]?'stale':'locked';}
+function sayKey(s){return s==='stale'?'paper':s;}
+function evalRoute(r,w){var st=r.steps.map(function(s){return gstate(s.g,w);}),stop=-1,i;
+  for(i=0;i<st.length;i++)if(G[r.steps[i].g].mode==='stop'&&st[i]==='locked'){stop=i;break;}
+  var lim=st.some(function(x,j){return x==='locked'&&(stop<0||j<=stop);}),gam=st.some(function(x){return x==='paper'||x==='stale';});
+  var v=stop>=0?{k:'stop',t:'擋在第'+CN[stop]+'步'}:lim?{k:'limit',t:'走得通，損害縮小'}:gam?{k:'gamble',t:'紅隊賭你沒查'}:{k:'open',t:'走得通'};
+  var dm=r.dmg.map(function(d){var idx=d.g.map(function(g){for(var j=0;j<r.steps.length;j++)if(r.steps[j].g===g)return j;return -1;});
+    var locked=d.g.some(function(g){return gstate(g,w)==='locked';}),moot=stop>=0&&idx.every(function(j){return j>stop;});
+    var paper=d.g.some(function(g){var s=gstate(g,w);return s==='paper'||s==='stale';});
+    return {t:d.t,after:d.after||null,k:locked||moot?'closed':paper?'paper':'open',moot:moot&&!locked};});
+  return {st:st,stop:stop,v:v,dm:dm};}
+function gateNames(){var o={};Object.keys(G).forEach(function(g){o[g]=gstate(g,W);});return o;}
+function say(t){var el=$('#live');el.textContent='';setTimeout(function(){el.textContent=t;},30);}
+
+function commit(title,text,mut){
+  var before=gateNames();H.push(JSON.stringify(W));if(H.length>200)H.shift();
+  mut(W);W.n++;
+  var after=gateNames(),chg=[],lines=[];
+  Object.keys(after).forEach(function(g){if(after[g]!==before[g]){chg.push(g);lines.push(G[g].name+'：'+GS[before[g]]+' → '+GS[after[g]]);}});
+  W.chg=chg;W.msg={title:title,text:text,lines:lines};
+  W.log.push({n:W.n,q:W.q,title:title,text:text,lines:lines});
+  if(UI.route){var ev2=evalRoute(RB[UI.route],W);if(ev2.stop>=0&&UI.cur>ev2.stop)UI.cur=ev2.stop;if(W.tour>0)UI.cur=0;}
+  UI.animate=true;render();
+  say(title+'。'+text+(lines.length?' 關卡變化：'+lines.join('；')+'。':''));
+}
+function tourAllows(id){return W.tour<0||(W.tour===2&&id==='K1')||(W.tour===3&&id==='P1');}
+function toggle(id){var l=LB[id];
+  if(!tourAllows(id)){say('導覽中，這一項稍後開放。');return;}
+  if(W.tour>0&&on(W,id))return;
+  if(on(W,id)){commit('收回：'+SRC[l.src].name+'｜'+l.name,'這股力量不再作用於：'+l.aff+'。',function(w){delete w.on[id];});return;}
+  commit('接上：'+SRC[l.src].name+'｜'+l.name,(l.res?l.res:l.desc)+' 代價：'+l.cost,function(w){w.on[id]=w.q;if(w.tour===2&&id==='K1')w.tour=3;else if(w.tour===3&&id==='P1')w.tour=4;});
+}
+function reverify(g){if(gstate(g,W)!=='stale')return;
+  commit('重新確認：'+G[g].name,'依變動後的狀況重新查過一次。',function(w){delete w.stale[g];});}
+function nextQ(){if(W.tour>=0)return;var ev=EVENTS[W.q+1],cleared=[];
+  Object.keys(W.stale).forEach(function(g){if(gstate(g,W)==='stale'&&G[g].ver.some(function(l){return on(W,l)&&PERIODIC[l];}))cleared.push(g);});
+  var title='過了一季'+(ev?'：'+ev.title:''),text='';
+  if(cleared.length)text+='上一季的例行覆核補上了：'+cleared.map(function(g){return G[g].name;}).join('、')+'。';
+  if(ev)text+=ev.text+(on(W,'K3')?ev.told:ev.untold);else text+='沒有新的變動通知。沒有通知，不代表沒有變動。';
+  commit(title,text,function(w){cleared.forEach(function(g){delete w.stale[g];});w.q++;
+    if(ev)ev.stale.forEach(function(g){if(gstate(g,w)==='locked')w.stale[g]=true;});});}
+function undo(){if(!H.length){say('沒有可以返回的步驟。');return;}W=JSON.parse(H.pop());W.chg=[];UI.animate=false;render();say('已返回上一步。');}
+function reset(){W=fresh();H=[];UI.route=null;UI.prog={r1:0,r2:0,r3:0};UI.cur=-1;UI.view='scene';UI.arm=false;UI.sheet=false;UI.animate=false;UI.intro=true;render();say('已重置，回到開場。');}
+function pickRoute(id,step){if(W.tour>=0&&id!=='r1')return;if(W.tour===0)return;
+  var first=UI.route!==id,p=UI.prog[id];UI.route=id;UI.fresh=[];
+  if(step==null){if(p===0){UI.prog[id]=1;UI.cur=0;UI.fresh=[id+':0'];}else if(first)UI.cur=Math.min(p,3)-1;}
+  else{if(step>=p){for(var i=p;i<=step;i++)UI.fresh.push(id+':'+i);UI.prog[id]=step+1;}UI.cur=step;}
+  UI.animate=UI.fresh.length>0;W.chg=[];render();
+  var r=RB[id],s=r.steps[UI.cur];say('路線'+CN[r.i]+'，'+r.name+'。第'+CN[UI.cur]+'步：'+s.title+'。');}
+function stepNext(){var id=UI.route;if(!id)return;var p=UI.prog[id];
+  if(UI.cur<Math.min(p,3)-1){UI.cur++;UI.animate=false;W.chg=[];render();return;}
+  if(p<3)pickRoute(id,p);else if(p===3){UI.prog[id]=4;UI.animate=false;W.chg=[];render();say('路線走完。潛在損害已列出。');}}
+function stepPrev(){if(UI.cur>0){UI.cur--;UI.animate=false;W.chg=[];render();}}
+function tourStart(){W.tour=1;UI.route='r1';UI.prog.r1=1;UI.cur=0;UI.fresh=['r1:0'];UI.animate=true;UI.intro=false;render();say('路線一，操作接管。第一步：拿到維運帳號。');}
+function tourSkip(){W.tour=-1;UI.intro=false;UI.animate=false;if(!UI.route){UI.route='r1';}if(UI.prog[UI.route]===0){UI.prog[UI.route]=1;UI.cur=0;}render();say('已進入自由探索。三條路線與所有措施都已開放。');}
+
+/* ───────── 圖示 ───────── */
+function lockShape(st){var c=st==='open'?'var(--red)':st==='locked'?'var(--blue)':st==='stale'?'var(--amber)':'var(--ink)';
+  if(st==='paper')return '<path d="M1.5 0.5H8.5L12.5 4.5V15.5H1.5Z" fill="none" stroke="'+c+'" stroke-width="1.4"/><path d="M4 7.5H10M4 10H10M4 12.5H8" stroke="'+c+'" stroke-width="1.2"/>';
+  if(st==='open')return '<path d="M3.5 8V4.5A3.5 3.5 0 0 1 10.3 3.2" fill="none" stroke="'+c+'" stroke-width="1.8"/><rect x="1" y="8" width="12" height="8" fill="none" stroke="'+c+'" stroke-width="1.5"/>';
+  if(st==='stale')return '<path d="M3.5 8V5A3.5 3.5 0 0 1 10.5 5V8" fill="none" stroke="'+c+'" stroke-width="1.8" stroke-dasharray="2 1.5"/><rect x="1" y="8" width="12" height="8" fill="none" stroke="'+c+'" stroke-width="1.5" stroke-dasharray="2.5 1.5"/><path d="M7 10V12.6M7 14V14.4" stroke="'+c+'" stroke-width="1.6"/>';
+  return '<path d="M3.5 8V5A3.5 3.5 0 0 1 10.5 5V8" fill="none" stroke="'+c+'" stroke-width="1.8"/><rect x="1" y="8" width="12" height="8" fill="'+c+'" stroke="'+c+'" stroke-width="1.5"/>';}
+function lockIcon(st){return '<svg width="15" height="17" viewBox="0 0 14 17" aria-hidden="true" focusable="false" style="vertical-align:-.2em">'+lockShape(st)+'</svg>';}
+
+/* ───────── 立體場景 ───────── */
+var PLATS=[
+ {id:'t3',x:30,w:220,h:24,cls:'far',name:'上游元件',sub:'沒有任何契約',i:3},
+ {id:'t2',x:290,w:270,h:30,cls:'mid',name:'業者 B',sub:'次承攬：託管',i:2},
+ {id:'t1',x:600,w:270,h:30,cls:'',name:'供應商 A',sub:'直接簽約：建置維運',i:1},
+ {id:'t0',x:910,w:260,h:42,cls:'home',name:'本公司',sub:'目標在這裡',i:0}
+];
+function zAt(x){return x>=900?43:x>=280?31:25;}
+function box(x,y,w,d,h,cls,style){return '<div class="box '+cls+'" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+d+'px;--h:'+h+'px;'+(style||'')+'"><div class="side l"></div><div class="side r"></div><div class="front"></div><div class="top"></div></div>';}
+function bb(x,y,z,cls,html,tag,attrs){tag=tag||'div';return '<'+tag+' class="bb '+cls+'" style="left:'+x+'px;top:'+y+'px;--z:'+z+'px" '+(attrs||'')+'>'+html+'</'+tag+'>';}
+function seg(a,b,z,cls){var dx=b[0]-a[0],dy=b[1]-a[1],len=Math.sqrt(dx*dx+dy*dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+  return '<div class="seg '+cls+'" style="left:'+a[0]+'px;top:'+a[1]+'px;width:'+len.toFixed(1)+'px;transform:translateZ('+z+'px) rotate('+ang.toFixed(2)+'deg)"></div>';}
+function flat(x,y,z,cls,html){return '<div class="flat '+cls+'" style="left:'+x+'px;top:'+y+'px;transform:translateZ('+z+'px)">'+html+'</div>';}
+function renderWorld(){var w=W,s='',tour=w.tour,free=tour<0,sel=UI.route,forces=tour!==0&&tour!==1;
+  s+='<div class="ground"></div>'+flat(30,650,1,'axis','←　離你的控制越遠');
+  [[-10,-128,70],[1210,-128,70],[-10,690,0],[1210,690,0],[-10,-128,0],[1210,-128,0],[-10,50,150],[1210,50,215]].forEach(function(r){s+='<div class="ref" style="left:'+r[0]+'px;top:'+r[1]+'px;transform:translateZ('+r[2]+'px)"></div>';});
+  var anyP=on(w,'P1')||on(w,'P2')||on(w,'P3'),kA=on(w,'K1')||on(w,'K2')||on(w,'K4'),k3=on(w,'K3'),s1=on(w,'S1');
+  PLATS.forEach(function(p){s+=box(p.x,70,p.w,500,p.h,'plat '+p.cls+(p.id==='t0'&&anyP?' engine':''),'--i:'+p.i);
+    s+=flat(p.x+14,506,p.h+1,'pname '+p.cls,'<b>'+p.name+'</b><span>'+p.sub+'</span>');});
+  /* 目標 */
+  var hit={data:'',svc:''};if(sel&&UI.prog[sel]>=4){var he=evalRoute(RB[sel],w);if(he.stop<0&&he.dm.some(function(d){return d.k!=='closed';}))hit[sel==='r1'?'data':'svc']=RB[sel].hit;}
+  s+=box(1072,142,56,56,46,'core'+(hit.data?' hit':''),'transform:translateZ(42px)')+bb(1100,170,140,'clab'+(hit.data?' hit':''),'客戶資料'+(hit.data?'｜'+hit.data:''));
+  s+=box(1072,367,56,56,46,'core'+(hit.svc?' hit':''),'transform:translateZ(42px)')+bb(1100,395,140,'clab'+(hit.svc?' hit':''),'線上服務'+(hit.svc?'｜'+hit.svc:''));
+  /* GRC 動力的射程 */
+  if(forces){
+    s+='<div class="law" style="left:1040px;top:72px"></div>'+bb(1040,72,172,'flab','法令：只壓在你身上');
+    s+=seg([30,598],[250,598],2,'rail never')+seg([290,598],[560,598],2,'rail'+(k3?' lit':''))+seg([600,598],[1040,598],2,'rail'+(kA||k3?' lit':''))+seg([1040,598],[1040,572],2,'rail'+(kA||k3?' lit':''));
+    s+=flat(608,608,2,'rlabel'+(kA||k3?' on':''),kA||k3?'契約到這裡':'契約：還沒接上');
+    s+=flat(298,608,2,'rlabel'+(k3?' on':''),k3?'轉委託條款到這裡':'契約到不了：沒寫明');
+    s+=flat(38,608,2,'rlabel','任何契約都到不了');
+    if(s1){s+=seg([290,640],[560,640],2,'rail cert')+seg([600,640],[870,640],2,'rail cert');
+      s+=flat(608,648,2,'rlabel on','認證：只涵蓋開發流程')+flat(298,648,2,'rlabel on','認證：只涵蓋備份控制');}
+    if(anyP)s+=flat(924,84,43,'rlabel on','內部政策：有人去查');
+  }
+  /* 路線 */
+  ROUTES.forEach(function(r,ri){if(tour===0)return;if(!free&&r.id!=='r1')return;
+    var e=evalRoute(r,w),p=UI.prog[r.id],isSel=sel===r.id,ex=r.ex,y0=r.steps[0].p[1],pts=[[ex,y0]].concat(r.steps.map(function(x){return x.p;})).concat([r.end]);
+    for(var i=0;i<4;i++){var hid=i<3?p<=i:p<3,gone=e.stop>=0&&i>e.stop,cls=(!isSel?'dimr':hid?'todo':gone?'gone':'flow')+(UI.fresh.indexOf(r.id+':'+i)>=0?' fresh':'');
+      if(i===0)s+=seg([ex,-78],[ex,y0],46,cls);
+      s+=seg(pts[i],pts[i+1],46,cls);}
+    s+=bb(ex,-78,56,'rlab'+(isSel?' sel':''),'路線'+CN[ri]+'　'+r.name,'button','type="button" data-k="rl:'+r.id+'" data-route="'+r.id+'" aria-pressed="'+isSel+'" aria-label="路線'+CN[ri]+'：'+r.name+'，'+r.tag+'。'+(p>0?e.v.t:'還沒看過')+'。"');
+    r.steps.forEach(function(st,i){var gs=e.st[i],shown=i<p,gone=e.stop>=0&&i>e.stop,cur=isSel&&UI.cur===i,pz=zAt(st.p[0]),chg=w.chg.indexOf(st.g)>=0,fr=UI.fresh.indexOf(r.id+':'+i)>=0;
+      s+='<div class="disc'+(!isSel?' dim':'')+(shown?'':' hid')+(gone?' gone':'')+'" style="left:'+st.p[0]+'px;top:'+st.p[1]+'px;--z:'+pz+'px"></div>';
+      if(shown||gs!=='open')s+='<div class="wall '+gs+(isSel?'':' dim')+(chg?' chg':'')+'" style="left:'+(st.p[0]-44)+'px;top:'+st.p[1]+'px;--z:'+pz+'px"><i></i></div>';
+      var al='路線'+CN[ri]+'第'+CN[i]+'步'+(shown?'：'+st.title+'。威脅：'+st.threat+'。發生在'+st.tier+'。關卡「'+G[st.g].name+'」：'+GS[gs]+'。'+(gone?'紅隊走不到這一步。':''):'，尚未揭露。按 Enter 看紅隊怎麼走。');
+      var inner=shown?'<span class="n">'+NUM[i]+'</span>'+(cur?esc(st.title)+' ':'')+'<svg width="14" height="17" viewBox="0 0 14 17" aria-hidden="true">'+lockShape(gs)+'</svg>':'<span class="n">'+NUM[i]+'</span>？';
+      if(isSel)s+=bb(st.p[0],st.p[1],pz+(cur?70:40),'badge'+(shown?'':' hid')+(cur?' cur':'')+(!isSel?' dim':'')+(gone&&shown?' gone':'')+(fr?' fresh':''),inner,'button','type="button" data-k="cd:'+r.id+':'+i+'" data-route="'+r.id+'" data-step="'+i+'" aria-label="'+esc(al)+'"');});
+    if(isSel&&p>0){var at=e.stop>=0&&UI.cur>=e.stop?[r.steps[e.stop].p[0]-84,r.steps[e.stop].p[1]]:(p>=4&&e.stop<0?r.end:r.steps[Math.max(0,UI.cur)].p);
+      s+=bb(at[0],at[1]-34,p>=4&&e.stop<0?176:(zAt(at[0])+116),'token fresh','<i></i>紅隊');}
+  });
+  var wd=$('#world');wd.className='world'+(UI.intro&&tour===0?' intro':'')+(UI.animate?' anim':'');wd.innerHTML=s;
+  wd.style.setProperty('--rx',UI.camFree?UI.camFree[0]+'deg':CAMS[UI.cam][1]);wd.style.setProperty('--rz',UI.camFree?UI.camFree[1]+'deg':CAMS[UI.cam][2]);
+}
+
+/* ───────── 對話框 ───────── */
+function chip(id,gid){var l=LB[id],dis=!tourAllows(id);return '<button type="button" class="chip" aria-pressed="'+on(W,id)+'" data-k="ch:'+gid+':'+id+'" data-lv="'+id+'"'+(dis?' aria-disabled="true"':'')+' aria-label="'+SRC[l.src].name+'：'+esc(l.name)+'" title="'+SRC[l.src].name+'">'+esc(l.name)+'</button>';}
+function dmgHtml(r,e){var h='<div class="dmg"><h4>'+(e.stop>=0?'如果沒被擋下，損害會是':'走完之後的潛在損害')+'</h4><ul>';
+  e.dm.forEach(function(d){var lab=d.k==='closed'?(d.after&&!d.moot?'已縮小':'已避免'):d.k==='paper'?'賭運氣':'會發生';
+    h+='<li class="'+d.k+'"><span class="ds '+d.k+'">'+lab+'</span><span><span class="dt">'+esc(d.t)+'</span>'+(d.k==='closed'&&d.after&&!d.moot?'<em>縮小為：'+esc(d.after)+'</em>':'')+'</span></li>';});
+  return h+'</ul><p class="resid"><b>擋不住的部分</b>　'+esc(r.resid)+'</p></div>';}
+function renderTalk(){var w=W,t=w.tour,el=$('#talk'),h='',cls='talk';
+  if(t===0){cls+=' one';
+    h='<div><div class="who" style="color:var(--ink2)">情境</div><p class="line" style="font-size:1.05rem;font-family:var(--sans)">你是資安負責人。線上客戶服務交給<b>供應商 A</b> 建置維運；A 把託管交給<b>業者 B</b>；產品裡還有<b>上游元件</b>。越往左，離你的控制越遠。</p>'
+     +'<div class="who">紅隊</div><p class="line red">董事會說，不准碰你們自己的系統？沒問題。我本來就不打算碰。</p>'
+     +'<div class="nav"><button type="button" class="btn go" data-k="start" data-start="1">看紅隊怎麼走</button><button type="button" class="btn link" data-k="skip" data-skip="1">跳過導覽，直接探索</button></div></div>';
+    el.className=cls;el.innerHTML=h;return;}
+  var r=RB[UI.route||'r1'],e=evalRoute(r,w),p=UI.prog[r.id],i=Math.max(0,UI.cur),st=r.steps[i],gs=e.st[i],g=G[st.g],gone=e.stop>=0&&i>e.stop,free=t<0;
+  if(w.msg&&free){var mt=w.msg.text+(w.msg.lines.length?'　關卡變化：'+w.msg.lines.join('；'):'');h+='<div class="msg" title="'+esc(w.msg.title+'　'+mt)+'"><strong>'+esc(w.msg.title)+'</strong>　'+esc(mt)+'</div>';}
+  h+='<div>';
+  if(p===1&&i===0&&(t===1||free)&&gs==='open')h+='<div class="who">紅隊｜路線'+CN[r.i]+'　'+r.name+'</div><p class="line red" style="font-size:1.02rem">'+esc(r.intro)+'</p>';
+  h+='<div class="stepmeta"><span class="rt">路線'+CN[r.i]+'　'+r.name+(p>0&&(free||t>=2)?'｜'+e.v.t:'')+'</span><b>'+NUM[i]+' '+esc(st.title)+'</b><span class="th">威脅：'+st.threat+'</span><span>發生在'+st.tier+'</span></div>';
+  h+='<p class="line red"><span class="sr">紅隊：</span>'+(gone?'前面已經被擋下。這一步我走不到。':esc(st.say[sayKey(gs)]))+'</p>';
+  if(t===2)h+='<p class="coachline"><b>換你。</b>每一步前面都可以立一道關卡，但要有力量到得了那裡。先試契約。</p>';
+  if(t===3)h+='<p class="coachline">條款到了供應商，可是沒有人去查。關卡是紙做的，紅隊照樣賭。再加上自己人去查。</p>';
+  if(t===4)h+='<p class="coachline"><b>規則只有這一條：有人提出要求，也有人確認做到，關卡才算鎖上。</b>右邊還有六項措施，每一項都寫著它作用在哪條路線的哪一步。</p>';
+  if(free||t>=2){h+='<div class="gate">'+lockIcon(gs)+'<b>關卡：'+esc(g.name)+'</b><span class="gs '+gs+'">'+GS[gs]+'</span>';
+    if(free){h+='<span class="role">要求</span>'+g.req.map(function(l){return chip(l,st.g);}).join('')+'<span class="role">確認</span>'+g.ver.map(function(l){return chip(l,st.g);}).join('');
+      h+='<span class="why">'+GSD[gs]+(gs==='open'&&g.ver.some(function(l){return on(w,l);})?(g.half||'有人準備去查，但沒有依據可以要求對方。'):'')+(g.mode==='limit'?'這一關擋不住紅隊，鎖上後能縮小損害。':'')+(g.cert&&on(w,'S1')?esc(g.cert):'')+'</span>';
+      if(g.note)h+='<details class="why" data-k="dt:'+st.g+'"><summary>這一關的力量從哪裡來</summary>'+esc(g.note)+'</details>';
+      if(gs==='stale')h+='<button type="button" class="btn" data-k="rv:'+st.g+'" data-rv="'+st.g+'">依變動後的狀況重新確認</button>';}
+    else h+='<span class="why">'+GSD[gs]+'</span>';
+    h+='</div>';}
+  h+='<div class="nav">';
+  if(t===1||free){if(i>0)h+='<button type="button" class="btn" data-k="prev" data-prev="1">回上一步</button>';
+    if(p<3||i<2)h+='<button type="button" class="btn go" data-k="next" data-next="1">紅隊的下一步</button>';
+    else if(p===3)h+='<button type="button" class="btn go" data-k="next" data-next="1">走完會怎樣</button>';
+    else if(t===1)h+='<button type="button" class="btn blue" data-k="tour2" data-tour2="1">換你出手</button>';
+    else{var nx=null;[1,2].forEach(function(d){var c=ROUTES[(r.i+d)%3];if(!nx&&UI.prog[c.id]<4)nx=c;});
+      h+=nx?'<button type="button" class="btn go" data-k="nxr" data-route="'+nx.id+'">看下一條路線：'+nx.name+'</button>':'<button type="button" class="btn blue" data-k="tosum" data-sum="1">三條都看過了，看總結</button>';}}
+  if(t===2)h+='<button type="button" class="btn blue" data-k="tk:K1" data-lv="K1">接上契約：存取與稽核條款</button>';
+  if(t===3)h+='<button type="button" class="btn blue" data-k="tk:P1" data-lv="P1">接上內部政策：委外監督辦法</button>';
+  if(t===4)h+='<button type="button" class="btn blue" data-k="free" data-skip="1">開始自由探索</button>';
+  if(t>0&&t<4)h+='<button type="button" class="btn link" data-k="skip" data-skip="1">跳過導覽</button>';
+  h+='</div></div>';
+  if(p>=4||t>=2)h+=dmgHtml(r,e);else cls+=' one';
+  if(t>=2&&t<=4)cls+=' coach';
+  el.className=cls;el.innerHTML=h;}
+
+/* ───────── 動力盤、路線選擇 ───────── */
+function renderDrawer(){var w=W,t=w.tour,d=$('#drawer');d.hidden=!(t<0||t>=2);if(d.hidden){d.innerHTML='';return;}
+  var nOn=Object.keys(w.on).length,cg=null;if(UI.route&&UI.cur>=0)cg=G[RB[UI.route].steps[UI.cur].g];
+  var h='<h2>GRC 動力盤<small>已接上 '+nOn+'／'+LV.length+'</small></h2>';
+  if(t<0)h+='<div class="q"><span><b>第 '+w.q+' 季</b></span><button type="button" class="btn" data-k="nextq" data-nextq="1">時間快轉一季</button><small>供應商那邊會變。鎖上的關卡不會永遠有效。</small></div>';
+  ['L','K','S','P'].forEach(function(k){var s=SRC[k];h+='<div class="src" title="'+esc(s.text)+'"><h3>'+s.name+'<small>'+s.role+'</small></h3><p>'+s.sh+'</p>';
+    LV.forEach(function(x){if(x.src!==k)return;var o=on(w,x.id),dis=!tourAllows(x.id),hint=(t===2&&x.id==='K1')||(t===3&&x.id==='P1');
+      var rel=cg?(cg.req.indexOf(x.id)>=0?'這一關的要求':cg.ver.indexOf(x.id)>=0?'這一關的確認':''):'';
+      h+='<button type="button" class="lv'+(hint?' hint':'')+(rel?' rel':'')+'" aria-pressed="'+o+'" data-k="lv:'+x.id+'" data-lv="'+x.id+'"'+(dis&&!o?' aria-disabled="true"':'')+' title="'+esc(x.desc+' 代價：'+x.cost)+'"><b>'+esc(x.name)+(rel?'<i>'+rel+'</i>':'')+'</b><small>'+(o&&x.res?'<span class="res">'+esc(x.res)+'</span>':esc(x.sh))+'</small><small class="aff">作用於：'+esc(x.aff)+'</small></button>';});
+    h+='</div>';});
+  d.innerHTML=h;}
+function renderPills(){var h='';if(W.tour<0)ROUTES.forEach(function(r,i){var e=evalRoute(r,W),p=UI.prog[r.id];
+    h+='<button type="button" class="pill" aria-pressed="'+(UI.route===r.id)+'" data-k="rt:'+r.id+'" data-route="'+r.id+'"><b>路線'+CN[i]+'　'+r.name+'</b><small class="'+(p>0?'v-'+e.v.k:'')+'">'+(p>0?e.v.t:'還沒看過')+'</small></button>';});
+  $('#pills').innerHTML=h;}
+
+/* ───────── 回到題目、文字版 ───────── */
+function renderSheet(){var w=W,el=$('#sheet');el.hidden=!UI.sheet;if(!UI.sheet){el.innerHTML='';return;}
+  var h='<button type="button" class="btn x" data-k="closesheet" data-closesheet="1">關閉</button><h2>回到題目：供應鏈與第三方管理</h2><p>管理的力量從公司往外傳，越遠越弱；紅隊從外面往裡走，挑力量到不了的地方進來。供應鏈管理要做的，是讓要求、確認、處置到得了攻擊會經過的每一段。</p><h3>三條路線現在的狀況</h3><ul class="sum">';
+  ROUTES.forEach(function(r){var e=evalRoute(r,w),o=e.dm.filter(function(d){return d.k==='open';}).length,pp=e.dm.filter(function(d){return d.k==='paper';}).length;
+    h+='<li><b>'+r.name+'</b><span>'+e.v.t+'。損害 '+e.dm.length+' 項中，'+o+' 項會發生'+(pp?'、'+pp+' 項賭運氣':'')+'。</span></li>';});
+  var c={open:0,paper:0,locked:0,stale:0};Object.keys(G).forEach(function(g){c[gstate(g,w)]++;});
+  h+='</ul><h3>對回風險控制的四件事</h3><ul class="sum">'
+   +'<li><b>控制已知</b><span>九個關卡中，已鎖上 '+c.locked+' 個；紙上關卡 '+c.paper+' 個。紙上關卡在紅隊眼裡等於沒有。</span></li>'
+   +'<li><b>化未知為已知</b><span>「知道自己用了哪些元件」：'+GS[gstate('g4',w)]+'。「知道有託管這一層」：'+GS[gstate('g7',w)]+'。</span></li>'
+   +'<li><b>處理未知</b><span>三條路線各有擋不住的部分。為它準備的關卡：操作紀錄（'+GS[gstate('g3',w)]+'）、還原演練（'+GS[gstate('g8',w)]+'）、資料帶得走（'+GS[gstate('g9',w)]+'）。</span></li>'
+   +'<li><b>持續管理</b><span>現在是第 '+w.q+' 季；需重新確認的關卡 '+c.stale+' 個。鎖上的關卡會因為對方的變動而失效。</span></li></ul>'
+   +'<h3>四個動力源各做什麼</h3><ul class="sum">'
+   +'<li><b>法令</b><span>壓力。只壓在你身上：委外移轉的是執行，要求、確認、處置的位置還在公司這裡。</span></li>'
+   +'<li><b>契約</b><span>傳動。把要求帶到供應商；沒寫明的下一層到不了，沒有契約的上游永遠到不了。</span></li>'
+   +'<li><b>標準與認證</b><span>借力。有效範圍以證書與報告寫明的為準，不會自動涵蓋你用的那項服務。</span></li>'
+   +'<li><b>內部政策</b><span>引擎。沒有自己人定期去查，條款只是紙上關卡。</span></li></ul><h3>紀錄</h3>';
+  h+=w.log.length?'<ol class="log">'+w.log.slice().reverse().map(function(l){return '<li><b>'+l.n+'. '+esc(l.title)+'</b>　<span class="c">第 '+l.q+' 季</span><div>'+esc(l.text)+'</div>'+(l.lines.length?'<div class="c">關卡變化：'+esc(l.lines.join('；'))+'</div>':'')+'</li>';}).join('')+'</ol>':'<p>還沒有任何動作。</p>';
+  el.innerHTML=h;}
+function renderText(){var w=W,h='<h2>情境</h2><p>虛構情境。你是一家企業的資安負責人，線上客戶服務委託供應商 A 建置及維運；A 把託管交給業者 B；產品裡還有上游元件。紅隊受託演練，條件是不碰公司自己的系統；他們提出三條全部從供應鏈進來的路線。</p><p>目前是第 '+w.q+' 季，已接上 '+Object.keys(w.on).length+'／'+LV.length+' 項措施。'+(w.tour>=0?'導覽進行中；按「跳過導覽」可直接開放全部功能。':'')+'</p>';
+  ROUTES.forEach(function(r,i){var e=evalRoute(r,w);
+    h+='<h2>路線'+CN[i]+'：'+r.name+'（'+r.tag+'）｜'+e.v.t+'</h2><p>紅隊：「'+esc(r.intro)+'」</p><table><thead><tr><th>步驟</th><th>威脅</th><th>發生在</th><th>紅隊的說法</th><th>關卡與狀態</th><th>提出要求</th><th>確認做到</th></tr></thead><tbody>';
+    r.steps.forEach(function(st,j){var gs=e.st[j],g=G[st.g],gone=e.stop>=0&&j>e.stop,f=function(a){return a.map(function(l){return SRC[LB[l].src].name+'｜'+LB[l].name+(on(w,l)?'（已接上）':'（未接上）');}).join('<br>');};
+      h+='<tr><th scope="row">'+NUM[j]+' '+esc(st.title)+'</th><td>'+st.threat+'</td><td>'+st.tier+'</td><td>'+(gone?'前面已被擋下，走不到這一步。':esc(st.say[sayKey(gs)]))+'</td><td>'+esc(g.name)+'：'+GS[gs]+'。'+GSD[gs]+'</td><td>'+f(g.req)+'</td><td>'+f(g.ver)+'</td></tr>';});
+    h+='</tbody></table><p>潛在損害：'+e.dm.map(function(d){return esc(d.t)+'〔'+(d.k==='closed'?(d.after&&!d.moot?'已縮小為：'+d.after:'已避免'):d.k==='paper'?'賭運氣':'會發生')+'〕';}).join('；')+'。</p><p>擋不住的部分：'+esc(r.resid)+'</p>';});
+  h+='<h2>GRC 動力盤</h2><table><thead><tr><th>動力源</th><th>作用與射程</th><th>可接上的措施</th><th>狀態</th><th>代價</th></tr></thead><tbody><tr><th scope="row">法令</th><td>'+SRC.L.role+'。'+SRC.L.reach+'。'+SRC.L.text+'</td><td>（一直都在，不能開關）</td><td>—</td><td>—</td></tr>';
+  LV.forEach(function(l){var s=SRC[l.src];h+='<tr><th scope="row">'+s.name+'</th><td>'+s.role+'。'+s.reach+'。</td><td>'+esc(l.name)+'：'+esc(l.desc)+(l.res&&on(w,l.id)?'<br>'+esc(l.res):'')+'</td><td>'+(on(w,l.id)?'第 '+w.on[l.id]+' 季接上':'未接上')+'<br>作用於：'+esc(l.aff)+'</td><td>'+esc(l.cost)+'</td></tr>';});
+  h+='</tbody></table><h2>紀錄</h2>'+(w.log.length?'<ol>'+w.log.map(function(l){return '<li>'+l.n+'.（第 '+l.q+' 季）'+esc(l.title)+'：'+esc(l.text)+(l.lines.length?' 關卡變化：'+esc(l.lines.join('；')):'')+'</li>';}).join('')+'</ol>':'<p>還沒有任何動作。</p>');
+  $('#textview').innerHTML=h;}
+
+/* ───────── 版面與總繪製 ───────── */
+function fit(){var vp=$('#vp'),r=vp.getBoundingClientRect(),dr=$('#drawer'),tk=$('#talk');if(!r.width)return;
+  var dw=dr.hidden?0:dr.offsetWidth,th=tk.offsetHeight,aw=r.width-dw-(dw?20:0),ah=r.height-th-16;
+  vp.style.setProperty('--dw',dw+'px');
+  if(UI.view!=='scene'||aw<50||ah<50)return;
+  var s=parseFloat(vp.style.getPropertyValue('--s'))||.8,cx=aw/2,cy=ah/2,refs=document.querySelectorAll('#world .ref'),it,i;
+  for(it=0;it<4;it++){
+    vp.style.setProperty('--s',s.toFixed(3));vp.style.setProperty('--ls',Math.max(1,Math.min(1.35,.98/s)).toFixed(3));vp.style.setProperty('--cx',cx.toFixed(0)+'px');vp.style.setProperty('--cy',cy.toFixed(0)+'px');
+    var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(i=0;i<refs.length;i++){var b=refs[i].getBoundingClientRect();x0=Math.min(x0,b.left);x1=Math.max(x1,b.right);y0=Math.min(y0,b.top);y1=Math.max(y1,b.bottom);}
+    if(x1<=x0||y1<=y0)break;
+    var k=Math.min((aw-16)/(x1-x0),(ah-12)/(y1-y0));s=Math.max(.3,Math.min(1.8,s*k));
+    cx+=(aw/2)-((x0+x1)/2-r.left);cy+=(ah/2)-((y0+y1)/2-r.top);
+  }
+  vp.style.setProperty('--s',s.toFixed(3));vp.style.setProperty('--ls',Math.max(1,Math.min(1.35,.98/s)).toFixed(3));vp.style.setProperty('--cx',cx.toFixed(0)+'px');vp.style.setProperty('--cy',cy.toFixed(0)+'px');}
+function render(){
+  var ae=document.activeElement,key=ae&&ae.getAttribute?ae.getAttribute('data-k'):null;
+  document.body.classList.toggle('rm',UI.rm);document.body.classList.toggle('light',UI.light);
+  $('#world').hidden=UI.view!=='scene';$('#textview').hidden=UI.view!=='text';$('#hintcam').hidden=UI.view!=='scene';
+  renderPills();renderDrawer();renderTalk();
+  if(UI.view==='scene')renderWorld();else renderText();
+  renderSheet();
+  $('#btnView').setAttribute('aria-pressed',UI.view==='text');$('#btnTheme').setAttribute('aria-pressed',UI.light);
+  $('#btnCam').textContent='視角：'+(UI.camFree?'自訂':CAMS[UI.cam][0]);
+  $('#btnBack').hidden=W.tour>=0&&W.tour<4;
+  $('#btnUndo').disabled=!H.length;
+  var br=$('#btnReset');br.textContent=UI.arm?'再按一次確認重置':'重置';br.classList.toggle('arm',UI.arm);
+  fit();
+  if(key){var t=document.querySelector('[data-k="'+key+'"]');if(t&&t!==document.activeElement){try{t.focus({preventScroll:true});}catch(err){t.focus();}}}
+  UI.animate=false;UI.fresh=[];
+}
+
+/* ───────── 事件 ───────── */
+function closest(el,attr){while(el&&el!==document&&el.getAttribute){if(el.hasAttribute(attr))return el;el=el.parentNode;}return null;}
+document.addEventListener('click',function(ev){var t=ev.target,el,was=UI.arm;UI.arm=false;
+  if((el=closest(t,'data-lv'))){toggle(el.getAttribute('data-lv'));return;}
+  if((el=closest(t,'data-rv'))){reverify(el.getAttribute('data-rv'));return;}
+  if(closest(t,'data-nextq')){nextQ();return;}
+  if(closest(t,'data-next')){stepNext();return;}
+  if(closest(t,'data-prev')){stepPrev();return;}
+  if(closest(t,'data-start')){tourStart();return;}
+  if(closest(t,'data-skip')){tourSkip();return;}
+  if(closest(t,'data-tour2')){W.tour=2;UI.cur=0;UI.animate=false;render();say('換你。接上契約的存取與稽核條款。');var k=document.querySelector('[data-k="tk:K1"]');if(k)k.focus();return;}
+  if(closest(t,'data-sum')){UI.sheet=true;render();var x=document.querySelector('[data-closesheet]');if(x)x.focus();return;}
+  if(closest(t,'data-closesheet')){UI.sheet=false;render();$('#btnBack').focus();return;}
+  if((el=closest(t,'data-step'))){pickRoute(el.getAttribute('data-route'),+el.getAttribute('data-step'));return;}
+  if((el=closest(t,'data-route'))){pickRoute(el.getAttribute('data-route'),null);return;}
+  if(was)render();
+});
+document.addEventListener('keydown',function(ev){var k=ev.key;
+  if(k==='Escape'){if(UI.sheet){UI.sheet=false;render();$('#btnBack').focus();}else if(UI.arm){UI.arm=false;render();}}
+});
+$('#btnBack').addEventListener('click',function(ev){ev.stopPropagation();UI.arm=false;UI.sheet=!UI.sheet;render();if(UI.sheet){var x=document.querySelector('[data-closesheet]');if(x)x.focus();}});
+$('#btnCam').addEventListener('click',function(ev){ev.stopPropagation();UI.arm=false;UI.cam=UI.camFree?0:(UI.cam+1)%CAMS.length;UI.camFree=null;render();say('視角：'+CAMS[UI.cam][0]+'。');});
+$('#btnTheme').addEventListener('click',function(ev){ev.stopPropagation();UI.arm=false;UI.light=!UI.light;render();});
+$('#btnView').addEventListener('click',function(ev){ev.stopPropagation();UI.arm=false;UI.view=UI.view==='scene'?'text':'scene';UI.animate=false;render();say(UI.view==='text'?'已切換為文字版。':'已切換為立體場景。');});
+$('#btnUndo').addEventListener('click',function(ev){ev.stopPropagation();UI.arm=false;undo();});
+$('#btnReset').addEventListener('click',function(ev){ev.stopPropagation();if(UI.arm)reset();else{UI.arm=true;render();say('再按一次確認重置；按 Esc 取消。');}});
+$('#chkRm').addEventListener('change',function(){UI.rm=this.checked;render();});
+/* 拖曳旋轉視角：只改 CSS 變數，不重繪 */
+(function(){var vp=$('#vp'),drag=null;
+  vp.addEventListener('pointerdown',function(ev){if(ev.target!==vp&&!ev.target.classList.contains('ground')&&ev.target.id!=='world'&&!(ev.target.classList&&(ev.target.classList.contains('top')||ev.target.classList.contains('front')||ev.target.classList.contains('side'))))return;if(UI.view!=='scene')return;
+    var cs=getComputedStyle($('#world'));drag={x:ev.clientX,y:ev.clientY,rx:parseFloat(cs.getPropertyValue('--rx')),rz:parseFloat(cs.getPropertyValue('--rz')),moved:false};vp.classList.add('drag');try{vp.setPointerCapture(ev.pointerId);}catch(e){}});
+  vp.addEventListener('pointermove',function(ev){if(!drag)return;var dx=ev.clientX-drag.x,dy=ev.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)<4)return;drag.moved=true;
+    var rx=Math.max(0,Math.min(72,drag.rx-dy*.25)),rz=Math.max(-55,Math.min(55,drag.rz+dx*.25));UI.camFree=[+rx.toFixed(1),+rz.toFixed(1)];
+    var w=$('#world');w.style.setProperty('--rx',rx+'deg');w.style.setProperty('--rz',rz+'deg');$('#btnCam').textContent='視角：自訂';});
+  function end(){if(drag){var m=drag.moved;drag=null;vp.classList.remove('drag');if(m)fit();}}
+  vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',end);})();
+window.addEventListener('resize',fit);
+render();
+/* 供測試使用的唯讀檢查點 */
+window.__app={W:function(){return W;},UI:UI,H:function(){return H.length;},gates:gateNames,routes:function(){return ROUTES.map(function(r){var e=evalRoute(r,W);return {id:r.id,v:e.v.k,stop:e.stop,dm:e.dm.map(function(d){return d.k;})};});}};
+})();
+</script>
+</body>
+</html>
