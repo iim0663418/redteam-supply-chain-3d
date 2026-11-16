@@ -447,7 +447,7 @@ function dmgHtml(r,e){var h='<div class="dmg"><h4>'+(e.stop>=0?'如果沒被擋�
 function renderTalk(){var w=W,t=w.tour,el=$('#talk'),h='',cls='talk';
   if(t===0){cls+=' one';
     h='<div><div class="who" style="color:var(--ink2)">情境</div><p class="line" style="font-size:1.05rem;font-family:var(--sans)">你是資安負責人。線上客戶服務交給<b>供應商 A</b> 建置維運；A 把託管交給<b>業者 B</b>；產品裡還有<b>上游元件</b>。越往左，離你的控制越遠。</p>'
-     +'<div class="who">紅隊</div><p class="line red">董事會說，不准碰你們自己的系統？沒問題。我本來就不打算碰。</p>'
+     +'<div class="who">紅隊</div><p class="line red">你們自己的系統，我不碰。要進來，走供應商就夠了。</p>'
      +'<div class="nav"><button type="button" class="btn go" data-k="start" data-start="1">看紅隊怎麼走</button><button type="button" class="btn link" data-k="skip" data-skip="1">跳過導覽，直接探索</button></div></div>';
     el.className=cls;el.innerHTML=h;return;}
   var r=RB[UI.route||'r1'],e=evalRoute(r,w),p=UI.prog[r.id],i=Math.max(0,UI.cur),st=r.steps[i],gs=e.st[i],g=G[st.g],gone=e.stop>=0&&i>e.stop,free=t<0;
